@@ -1,4 +1,5 @@
 import os
+import random
 from logging import log
 from flask import Flask, request, session, g, redirect, url_for, jsonify, abort
 from sqlite3 import dbapi2 as sqlite3
@@ -31,10 +32,18 @@ def register(username):
     addPlayer(username)
     return "Success"
 
+@app.route('/getHand/<username>')
+def getHand(username):
+    cur = g.db.execute('select card_id from players_cards where name=?', [username])
+    cards = [jsonify(card_id, row[0]) for row in cur.fetchall()]
+
 @app.route('/move', methods=['POST'])
 def move():
     user = request.form['user']
-    return str(user)
+    card_idx = request.form['card_idx']
+    target = request.form['target']
+
+    return "TODO"
 
 def addPlayer(username, population=2000000):
     cur = g.db.execute('select * from players where name=?', [username])
@@ -47,9 +56,9 @@ def drawCards():
     cur = g.db.execute('select id from players')
     for player in cur.fetchall():
         player_id = player.row[0]
-        addCard(getRandomCard(), player_id)
-        addCard(getRandomCard(), player_id)
-        addCard(getRandomCard(), player_id)
+        addCard(getRandomAttackCard(), player_id)
+        addCard(getRandomAttackCard(), player_id)
+        addCard(getRandomBuffCard(), player_id)
 
 def addCard(card_id, player_id):
     g.db.execute('insert into players_cards (card_id, player_id) values (?, ?)', [card_id, player_id])
@@ -59,9 +68,17 @@ def clearHands():
     g.db.execute('drop form players_cards')
     g.db.commit()
 
-def getRandomCard():
-    with open('data.json') as data_fil:
-        data = json.load(data_file)
+def getRandomAttackCard():
+    return getRandomCard("attack")
+
+def getRandomBuffCard():
+    return getRandomCard("buff")
+
+def getRandomCard(cardType):
+    with open('cards.json') as data_file:
+        cards = json.load(data_file)[cardType]
+        card_index = random.randomint(1,len(cards))-1
+        return cards[card_index]["id"]
 
 def connect_db():
     rv = sqlite3.connect(app.config['DATABASE'])
