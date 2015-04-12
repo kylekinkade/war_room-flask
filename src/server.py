@@ -25,19 +25,15 @@ def hello():
 
 @app.route('/getUpdates/<username>')
 def getUpdates(username):
-    cur = g.db.execute('select name, population from players order by id desc')
-    players = [{'name':row[0],'pop':row[1]} for row in cur.fetchall()]
-    return jsonify(players=players)
+    players = getPlayers()
+    hand = getHand(username)
+    return json.dumps({"players":players, "hand":hand})
 
 @app.route('/register/<username>')
 def register(username):
     addPlayer(username)
     return "Success"
 
-@app.route('/getHand/<username>')
-def getHand(username):
-    cur = g.db.execute('select card_id from players_cards where name=?', [username])
-    cards = [jsonify(card_id, row[0]) for row in cur.fetchall()]
 
 @app.route('/move', methods=['POST'])
 def move():
@@ -46,6 +42,22 @@ def move():
     target = request.form['target']
 
     return "TODO"
+
+@app.route('/nextTurn')
+def nextTurn():
+    clearHands()
+    drawCards()
+    return "Success"
+
+def getHand(username):
+    cur = g.db.execute('select card_id from players_cards join players on players_cards.player_id=players.id where players.name=?', [username])
+    cards = [row[0] for row in cur.fetchall()]
+    return cards
+
+def getPlayers():
+    cur = g.db.execute('select name, population from players order by id desc')
+    players = [{'name':row[0],'pop':row[1]} for row in cur.fetchall()]
+    return players
 
 def addPlayer(username, population=2000000):
     cur = g.db.execute('select * from players where name=?', [username])
@@ -57,7 +69,7 @@ def addPlayer(username, population=2000000):
 def drawCards():
     cur = g.db.execute('select id from players')
     for player in cur.fetchall():
-        player_id = player.row[0]
+        player_id = player["id"]
         addCard(getRandomAttackCard(), player_id)
         addCard(getRandomAttackCard(), player_id)
         addCard(getRandomBuffCard(), player_id)
@@ -67,7 +79,7 @@ def addCard(card_id, player_id):
     g.db.commit()
 
 def clearHands():
-    g.db.execute('drop form players_cards')
+    g.db.execute('delete from players_cards')
     g.db.commit()
 
 def getRandomAttackCard():
@@ -77,9 +89,9 @@ def getRandomBuffCard():
     return getRandomCard("buff")
 
 def getRandomCard(cardType):
-    with open('cards.json') as data_file:
+    with open(os.path.join(app.root_path, 'cards.json')) as data_file:
         cards = json.load(data_file)[cardType]
-        card_index = random.randomint(1,len(cards))-1
+        card_index = random.randint(1,len(cards))-1
         return cards[card_index]["id"]
 
 def connect_db():
