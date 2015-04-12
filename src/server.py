@@ -20,8 +20,6 @@ app.config.from_envvar('WAR_ROOM_SETTINGS', silent=True)
 @app.route('/')
 def hello():
     return render_template('games.html');
-    #return app.send_static_file('Deployments/Deployments.html')
-	#return "Hello there! c:"
 
 @app.route('/getUpdates/<username>')
 def getUpdates(username):
@@ -41,9 +39,10 @@ def move():
     card_idx = request.form['card_idx']
     target = request.form['target']
 
+    if len(cur.fetchall()) > len(getPlayers()):
+        print ""
     return "TODO"
 
-@app.route('/nextTurn')
 def nextTurn():
     clearHands()
     drawCards()
@@ -60,8 +59,7 @@ def getPlayers():
     return players
 
 def addPlayer(username, population=2000000):
-    cur = g.db.execute('select * from players where name=?', [username])
-    if len(cur.fetchall()) > 0:
+    if len(getPlayers()) > 0:
         abort(400)
     g.db.execute('insert into players (name, population) values (?, ?)', [username, population])
     g.db.commit()
