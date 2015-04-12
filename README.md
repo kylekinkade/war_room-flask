@@ -1,5 +1,7 @@
 Clone repository
+
 Run bootstrap ```python27 bootstrap.py```
+
 Run buildout ```bin/buildout```
 
 
