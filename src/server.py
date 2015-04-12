@@ -19,7 +19,8 @@ app.config.from_envvar('WAR_ROOM_SETTINGS', silent=True)
 
 @app.route('/')
 def hello():
-    return app.send_static_file('Deployments/Deployments.html')
+    return render_template('games.html');
+    #return app.send_static_file('Deployments/Deployments.html')
 	#return "Hello there! c:"
 
 @app.route('/getUpdates/<username>')
