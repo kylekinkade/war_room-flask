@@ -1,7 +1,7 @@
 import os
 import random
 from logging import log
-from flask import Flask, request, session, g, redirect, url_for, jsonify, abort
+from flask import Flask, request, session, g, redirect, url_for, jsonify, abort, render_template
 from sqlite3 import dbapi2 as sqlite3
 from contextlib import closing
 import json
