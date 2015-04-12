@@ -19,8 +19,7 @@ app.config.from_envvar('WAR_ROOM_SETTINGS', silent=True)
 
 @app.route('/')
 def hello():
-    return send_from_directory("Deployments", "Deployments.html");
-    #return "Hello there! c:"
+    return "Hello there! c:"
 
 @app.route('/getUpdates/<username>')
 def getUpdates(username):
