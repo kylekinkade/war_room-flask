@@ -43,6 +43,10 @@ def move():
         print ""
     return "TODO"
 
+@app.route('/tableFlip')
+def reset():
+    init_db()
+
 def nextTurn():
     clearHands()
     drawCards()
