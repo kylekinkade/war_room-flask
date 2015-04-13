@@ -52,6 +52,11 @@ def move():
 
     return "TODO"
 
+@app.route('/tableFlip')
+def reset():
+    init_db()
+    return "Success"
+
 def nextTurn():
     g.db.execute('insert into round (foo) values ("bar")')
     g.db.commit()
