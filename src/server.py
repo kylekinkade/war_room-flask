@@ -36,7 +36,7 @@ def register(username):
 @app.route('/start')
 def startGame():
     nextTurn()
-	return "Success"
+    return "Success"
 
 @app.route('/move', methods=['POST'])
 def move():
