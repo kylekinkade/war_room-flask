@@ -42,7 +42,7 @@ def move():
     round_num = getCurrentRound()
 
     cur = g.db.execute('select * from moves where player_id=? and round=?', [getPlayerId(user), round_num])
-    if len(cur.fetchall()) > 0:
+    if len(cur.fetchall()) == 3:
         abort(400)
 
     card_id = getCardByIndex(card_idx)
@@ -53,7 +53,9 @@ def move():
 
 def resolveTurn():
     for move in getCurrentRoundMoves():
-        print ""
+        card = getCard(move["card_id"])
+        damage = card["power"] * 100000
+        setPlayerPopulation(getPlayerPopulation(move['target']) - damage)
     nextTurn()
 
 @app.route('/tableFlip')
@@ -67,6 +69,13 @@ def nextTurn():
     clearHands()
     drawCards()
     return "Success"
+
+def getPlayerPopulation(player_id):
+    return g.db.execute('select population from players where id = ?', [player_id]).fetchall()[0]
+
+def setPlayerPopulation(player_id, population):
+    g.db.execute('update players set population=? where id=?', [population, player_id])
+    g.db.commit()
 
 def getHand(username):
     cur = g.db.execute('select card_id from players_cards join players on players_cards.player_id=players.id where players.name=?', [username])
@@ -122,6 +131,13 @@ def drawCards():
 def addCard(card_id, player_id):
     g.db.execute('insert into players_cards (card_id, player_id) values (?, ?)', [card_id, player_id])
     g.db.commit()
+
+def getCard(card_id):
+    with open(os.path.join(app.root_path, 'cards.json')) as data_file:
+        cards = json.load(data_file)[cardType]
+        for card in cards:
+            if card['id'] == card_id:
+                return card
 
 def clearHands():
     g.db.execute('delete from players_cards')

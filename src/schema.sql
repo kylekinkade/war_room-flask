@@ -6,6 +6,14 @@ create table players (
   country text not null unique
 );
 
+drop table if exists resources;
+create table resources (
+  id integer primary key autoincrement,
+  player_id integer not null,
+  water integer not null,
+  wheat integer not null
+);
+
 drop table if exists players_cards;
 create table players_cards (
     id integer primary key autoincrement,
