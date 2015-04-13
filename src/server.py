@@ -29,21 +29,32 @@ def getUpdates(username):
 
 @app.route('/register/<username>')
 def register(username):
-    addPlayer(username)
-    return "Success"
+    if len(getPlayers()) == 4:
+        abort(400)
+    return addPlayer(username)
 
 
 @app.route('/move', methods=['POST'])
 def move():
     user = request.form['user']
     card_idx = request.form['card_idx']
-    target = request.form['target']
+    target_name = request.form['target']
+    round_num = getCurrentRound()
 
-    if len(cur.fetchall()) > len(getPlayers()):
-        print ""
+    cur = g.db.execute('select * from moves where player_id=? and round=?', [getPlayerId(user), round_num])
+    if len(cur.fetchall()) > 0:
+        abort(400)
+
+    card_id = getCardByIndex(card_idx)
+    target_id = getPlayerId(target_name)
+    addMove(user, card_id, target, round_num)
+
+
     return "TODO"
 
 def nextTurn():
+    g.db.execute('insert into round (foo) values ("bar")')
+    g.db.commit()
     clearHands()
     drawCards()
     return "Success"
@@ -54,15 +65,39 @@ def getHand(username):
     return cards
 
 def getPlayers():
-    cur = g.db.execute('select name, population from players order by id desc')
+    cur = g.db.execute('select country, population from players order by id desc')
     players = [{'name':row[0],'pop':row[1]} for row in cur.fetchall()]
     return players
 
-def addPlayer(username, population=2000000):
-    if len(getPlayers()) > 0:
-        abort(400)
-    g.db.execute('insert into players (name, population) values (?, ?)', [username, population])
+def getMoves():
+    cur=g.db.execute('select * from moves')
+    return cur.fetchall()
+
+def addMove(user, card_id, target, round_num):
+    g.db.execute('insert into moves (player_id, card_id, target_id, round) values (?, ?, ?, ?)', [user, card_id, target, round_num])
     g.db.commit()
+
+def addPlayer(username, population=2000000):
+    if len(getMoves()) > 0:
+        abort(400)
+    cur = g.db.execute('select * from players where name=?', [username])
+    if len(cur.fetchall()) > 0:
+        abort(400)
+    names = ["Somethingland", "Newtopia", "Oldtopia", "Empireland"]
+    country = names[len(getPlayers())]
+    g.db.execute('insert into players (name, population, country) values (?, ?, ?)', [username, population, country])
+    g.db.commit()
+    return country
+
+def getPlayerId(username):
+    cur = g.db.execute('select id from players where name=?', [username])
+    return cur.fetchall()[0]['id']
+
+def getRounds():
+    return g.db.execute('select * from round').fetchall()
+
+def getCurrentRound():
+    return len(getRounds())
 
 def drawCards():
     cur = g.db.execute('select id from players')
