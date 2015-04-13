@@ -19,7 +19,7 @@ app.config.from_envvar('WAR_ROOM_SETTINGS', silent=True)
 
 @app.route('/')
 def hello():
-    return render_template('games.html');
+    return render_template('game.html');
 
 @app.route('/getUpdates/<username>')
 def getUpdates(username):
@@ -48,9 +48,13 @@ def move():
     card_id = getCardByIndex(card_idx)
     target_id = getPlayerId(target_name)
     addMove(user, card_id, target, round_num)
+    if len(getCurrentRoundMoves()) == len(getPlayers()):
+        resolveTurn()
 
-
-    return "TODO"
+def resolveTurn():
+    for move in getCurrentRoundMoves():
+        print ""
+    nextTurn()
 
 @app.route('/tableFlip')
 def reset():
@@ -77,6 +81,9 @@ def getPlayers():
 def getMoves():
     cur=g.db.execute('select * from moves')
     return cur.fetchall()
+
+def getCurrentRoundMoves():
+    return g.db.execute('select * from moves where round = ?', [getCurrentRound()]).fetchall()
 
 def addMove(user, card_id, target, round_num):
     g.db.execute('insert into moves (player_id, card_id, target_id, round) values (?, ?, ?, ?)', [user, card_id, target, round_num])
