@@ -33,6 +33,9 @@ def register(username):
         abort(400)
     return addPlayer(username)
 
+@app.route('/start')
+def startGame():
+    nextTurn()
 
 @app.route('/move', methods=['POST'])
 def move():
@@ -88,7 +91,7 @@ def getPlayers():
     return players
 
 def getMoves():
-    cur=g.db.execute('select * from movesi order by id desc')
+    cur=g.db.execute('select * from moves order by id desc')
     return cur.fetchall()
 
 def getCurrentRoundMoves():
