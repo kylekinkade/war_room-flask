@@ -1,6 +1,7 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+*.db
 
 # C extensions
 *.so
@@ -14,6 +15,7 @@ dist/
 downloads/
 bin/
 eggs/
+bin/
 .eggs/
 lib/
 lib64/

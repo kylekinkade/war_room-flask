@@ -1,0 +1,68 @@
+{
+    "attack":[
+        {
+            "id":1,
+            "name": "Hammer",
+            "description": "This is a hammer.",
+            "power": 1,
+            "target": "population",
+            "secrecy": 0.0
+        },
+        {
+            "id":2,
+            "name": "Missile",
+            "description": "Explosives on Rockets.",
+            "power":2,
+            "target": "population",
+            "secrecy": 0.0
+        },
+        {
+            "id":7,
+            "name": "Microwave Oven",
+            "description": "Nuke them into submission.",
+            "power":2,
+            "target": "population",
+            "secrecy": 0.0
+        },
+        {
+            "id":3,
+            "name": "Gas",
+            "description": "Secretly put gas in the water!.",
+            "power":2,
+            "target": [
+                "population",
+                "water"
+            ],
+            "secrecy": 0.4
+        },
+        {
+            "id":4,
+            "name": "Espionage",
+            "description": "Secretly steal some of the resources!",
+            "power":3,
+            "target": "wheat",
+            "secrecy": 0.8
+        }
+    ],
+    "buff":[
+        {
+            "id": 5,
+            "description": "Increase one random resource of both party",
+            "power": 0.3,
+            "length": 3,
+            "target": "resource",
+            "recipient": [
+                "other",
+                "self"
+            ]
+        },
+        {
+            "id": 6,
+            "description": "Save water, encourage people to use less water for 3 turns",
+            "power": -0.05,
+            "length": 3,
+            "target": "water",
+            "recipent": "self"
+        }
+    ]
+}
