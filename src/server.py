@@ -46,6 +46,7 @@ def move():
 @app.route('/tableFlip')
 def reset():
     init_db()
+    return "Success"
 
 def nextTurn():
     clearHands()
