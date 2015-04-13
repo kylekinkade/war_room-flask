@@ -48,7 +48,7 @@ def move():
     card_id = getCardByIndex(card_idx)
     target_id = getPlayerId(target_name)
     addMove(user, card_id, target, round_num)
-    if len(getCurrentRoundMoves()) == len(getPlayers()):
+    if len(getCurrentRoundMoves()) == len(getPlayers()*3):
         resolveTurn()
 
 def resolveTurn():
@@ -88,11 +88,11 @@ def getPlayers():
     return players
 
 def getMoves():
-    cur=g.db.execute('select * from moves')
+    cur=g.db.execute('select * from movesi order by id desc')
     return cur.fetchall()
 
 def getCurrentRoundMoves():
-    return g.db.execute('select * from moves where round = ?', [getCurrentRound()]).fetchall()
+    return g.db.execute('select * from moves where round = ? order by id desc', [getCurrentRound()]).fetchall()
 
 def addMove(user, card_id, target, round_num):
     g.db.execute('insert into moves (player_id, card_id, target_id, round) values (?, ?, ?, ?)', [user, card_id, target, round_num])
@@ -115,7 +115,7 @@ def getPlayerId(username):
     return cur.fetchall()[0]['id']
 
 def getRounds():
-    return g.db.execute('select * from round').fetchall()
+    return g.db.execute('select * from round order by id desc').fetchall()
 
 def getCurrentRound():
     return len(getRounds())
