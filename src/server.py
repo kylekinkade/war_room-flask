@@ -59,7 +59,7 @@ def getHand(username):
     return cards
 
 def getPlayers():
-    cur = g.db.execute('select name, population from players order by id desc')
+    cur = g.db.execute('select country, population from players order by id desc')
     players = [{'name':row[0],'pop':row[1]} for row in cur.fetchall()]
     return players
 
