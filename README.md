@@ -4,7 +4,9 @@ Client component can be found here: https://github.com/acceleron3000/war_room_cl
 
 #War Room Team#
 Livio De La Cruz - https://github.com/acceleron3000
+
 Ji Mun - https://github.com/jimun
+
 Kyle Kinkade - https://github.com/kylekinkade
 
 #Installation#
